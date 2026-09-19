@@ -609,6 +609,35 @@
       color: #fefdfb;
     }
 
+    .info-dialog {
+      width: min(420px, calc(100vw - 2rem));
+      border: 1px solid #d8d2c8;
+      background: #fefdfb;
+      color: #1e1e1e;
+      padding: 1.5rem;
+      box-shadow: 0 1rem 3rem rgba(30, 30, 30, 0.16);
+    }
+
+    .info-dialog::backdrop {
+      background: rgba(30, 30, 30, 0.28);
+    }
+
+    .info-dialog h2 {
+      font: 500 1.7rem/1.15 'Cormorant Garamond', serif;
+      margin: 0 0 0.6rem;
+    }
+
+    .info-dialog p {
+      color: #6b6258;
+      font-size: 1.05rem;
+      margin: 0 0 1.25rem;
+    }
+
+    .info-dialog .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
     /* build output */
     .build-output {
       margin-top: 2rem;
@@ -1359,6 +1388,16 @@
     </form>
   </dialog>
 
+  <dialog id="infoDialog" class="info-dialog" aria-labelledby="infoDialogTitle">
+    <form method="dialog">
+      <h2 id="infoDialogTitle">Studio</h2>
+      <p id="infoDialogMessage"></p>
+      <div class="dialog-actions">
+        <button class="btn btn-primary" value="close">Close</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- ========== ABOUT VIEW ========== -->
   <div id="aboutView" class="view">
     <div class="about-content">
@@ -1539,6 +1578,9 @@
     const deleteDialog = document.getElementById('deleteDialog');
     const deleteDialogMessage = document.getElementById('deleteDialogMessage');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const infoDialog = document.getElementById('infoDialog');
+    const infoDialogTitle = document.getElementById('infoDialogTitle');
+    const infoDialogMessage = document.getElementById('infoDialogMessage');
 
     // preview
     const previewTitle = document.getElementById('previewTitle');
@@ -1866,6 +1908,12 @@
       updatePreview();
     }
 
+    function showInfoDialog(title, message) {
+      infoDialogTitle.textContent = title;
+      infoDialogMessage.textContent = message;
+      infoDialog.showModal();
+    }
+
     // ---------- SAVE POST ----------
     function savePost() {
       const title = postTitle.value.trim();
@@ -1877,7 +1925,8 @@
       const content = postContent.value.trim();
 
       if (!title) {
-        alert('please give your post a title.');
+        showInfoDialog('Title needed', 'Give this article a title before saving it.');
+        postTitle.focus();
         return;
       }
 
@@ -1900,7 +1949,7 @@
       renderStudioList();
       renderCatalog(searchInput.value);
       clearForm();
-      alert('post saved.');
+      showInfoDialog('Article saved', `“${title}” is saved in Studio and ready for the next journal publish.`);
     }
 
     // ---------- LIVE PREVIEW ----------
