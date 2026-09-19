@@ -1,0 +1,2377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cogito · studio — write, build, publish</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- RESET & BASE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #faf9f7;
+      color: #1e1e1e;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 400;
+      line-height: 1.6;
+      padding: 2rem 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0 clamp(1.2rem, 3vw, 3.5rem);
+    }
+
+    /* ---------- HEADER ---------- */
+    .site-header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e0dbd2;
+      padding-bottom: 1.25rem;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .site-title {
+      font-size: 2.6rem;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: #1e1e1e;
+    }
+
+    .site-title a {
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+
+    .site-title a:hover {
+      opacity: 0.7;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 1.4rem;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6b6258;
+      padding-bottom: 0.25rem;
+    }
+
+    .nav-tabs a {
+      text-decoration: none;
+      color: inherit;
+      padding: 0.45rem 0.15rem 0.3rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .nav-tabs a:hover {
+      color: #1e1e1e;
+      border-bottom-color: #b8ae9f;
+      transform: translateY(-1px);
+    }
+
+    .nav-tabs a.active {
+      color: #1e1e1e;
+      border-bottom-color: #1e1e1e;
+      font-weight: 600;
+    }
+
+    .subhead {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: #6b6258;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .subhead .cogito {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      text-transform: none;
+      letter-spacing: 0.01em;
+      color: #3a342e;
+    }
+
+    /* ---------- VIEWS ---------- */
+    .view {
+      display: none;
+    }
+
+    .view.active-view {
+      display: block;
+    }
+
+    .journal-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 2rem;
+      align-items: start;
+      width: 100%;
+    }
+
+    .journal-main {
+      min-width: 0;
+    }
+
+    .journal-sidebar {
+      position: sticky;
+      top: 1.25rem;
+      align-self: start;
+    }
+
+    .sidebar-panel {
+      border-left: 1px solid #e3ddd4;
+      padding-left: 1rem;
+      min-height: 200px;
+    }
+
+    .sidebar-kicker {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8d8379;
+      margin-bottom: 0.9rem;
+    }
+
+    .tree-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .tree-list li {
+      border-left: 1px solid #e5dfd7;
+      padding-left: 0.7rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .tree-list li.active {
+      border-left-color: #1e1e1e;
+    }
+
+    .tree-list a {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      line-height: 1.5;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #4d473f;
+      display: block;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .tree-list a:hover {
+      color: #1e1e1e;
+      transform: translateX(2px);
+    }
+
+    .post-detail-view {
+      display: none;
+      margin: 1rem 0 2.5rem;
+      border: 1px solid #e8e2d9;
+      background: #fefdfb;
+      padding: 1.5rem;
+    }
+
+    .post-detail-back {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b6258;
+      background: transparent;
+      border: none;
+      padding: 0 0 1rem 0;
+      cursor: pointer;
+    }
+
+    .post-detail-back:hover {
+      color: #1e1e1e;
+    }
+
+    .post-detail {
+      max-width: 760px;
+    }
+
+    .post-detail h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      line-height: 1.1;
+      font-weight: 500;
+      color: #1e1e1e;
+      margin-bottom: 0.7rem;
+      letter-spacing: -0.02em;
+    }
+
+    .post-detail .post-article-meta {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #928b82;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .post-detail .article-image {
+      margin: 1.5rem 0 2rem;
+      border: 1px solid #e8e2d9;
+      background: #f2efea;
+    }
+
+    .post-detail .article-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: grayscale(18%) contrast(100%);
+    }
+
+    .post-detail .article-image figcaption {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #928b82;
+      padding: 0.7rem 0.8rem;
+      background: #faf9f7;
+      border-top: 1px solid #e8e2d9;
+    }
+
+    .post-detail .article-body {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #2f2a27;
+      white-space: pre-wrap;
+    }
+
+    .post-detail .article-body p {
+      margin: 0 0 1.2rem;
+    }
+
+    .post-detail .article-lead {
+      font-size: 1.3rem;
+      font-style: italic;
+      color: #3a342e;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+      padding-left: 1rem;
+      border-left: 2px solid #d8d2c8;
+    }
+
+    .post-detail .article-body strong {
+      font-weight: 600;
+    }
+
+    /* ---------- STUDIO / EDITOR ---------- */
+    .studio-intro {
+      margin-bottom: 2rem;
+    }
+
+    .studio-intro p {
+      font-size: 1.15rem;
+      color: #3a342e;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .studio-intro .hint {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #928b82;
+      background: #f2efea;
+      padding: 0.75rem 1rem;
+      border-left: 3px solid #d8d2c8;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 700px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .editor-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .editor-panel label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #6b6258;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .editor-panel input,
+    .editor-panel textarea {
+      width: 100%;
+      border: 1px solid #ddd6cd;
+      background: #fefdfb;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      padding: 0.75rem 1rem;
+      color: #1e1e1e;
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 0;
+    }
+
+    .editor-panel input:focus,
+    .editor-panel textarea:focus {
+      border-color: #1e1e1e;
+    }
+
+    .editor-panel textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    .editor-panel textarea.content-area {
+      min-height: 260px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .editor-panel input::placeholder,
+    .editor-panel textarea::placeholder {
+      color: #b1a89e;
+      font-style: italic;
+    }
+
+    .editor-panel .field-group {
+      margin-bottom: 0;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+
+    .btn {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.5rem;
+      border: 1px solid #1e1e1e;
+      background: transparent;
+      color: #1e1e1e;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      border-radius: 0;
+    }
+
+    .btn:hover {
+      background: #1e1e1e;
+      color: #faf9f7;
+    }
+
+    .btn-primary {
+      background: #1e1e1e;
+      color: #faf9f7;
+    }
+
+    .btn-primary:hover {
+      background: #3a342e;
+      border-color: #3a342e;
+    }
+
+    .btn-ghost {
+      border-color: #cbc3b8;
+      color: #6b6258;
+    }
+
+    .btn-ghost:hover {
+      border-color: #1e1e1e;
+      color: #1e1e1e;
+      background: transparent;
+    }
+
+    /* preview card */
+    .preview-card {
+      border: 1px solid #e8e2d9;
+      background: #fefdfb;
+      padding: 1.5rem;
+    }
+
+    .preview-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.5rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      color: #1e1e1e;
+    }
+
+    .preview-card .preview-meta {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #928b82;
+      margin-bottom: 0.75rem;
+    }
+
+    .preview-card .preview-excerpt {
+      font-size: 1rem;
+      color: #3a342e;
+      line-height: 1.6;
+      font-style: italic;
+      border-left: 2px solid #e0dbd2;
+      padding-left: 1rem;
+    }
+
+    .preview-card .preview-body {
+      font-size: 0.95rem;
+      color: #3a342e;
+      line-height: 1.7;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* post list (existing) */
+    .post-list {
+      list-style: none;
+      margin: 1.5rem 0;
+      padding: 0;
+      border-top: 1px solid #ece7e0;
+    }
+
+    .post-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid #ece7e0;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.9rem;
+      color: #3a342e;
+    }
+
+    .post-list li .post-list-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #1e1e1e;
+      flex: 1;
+    }
+
+    .post-list li .post-list-date {
+      color: #928b82;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin: 0 1rem;
+    }
+
+    .post-list li .post-list-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .post-list li .post-list-actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #928b82;
+      padding: 0.2rem 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .post-list li .post-list-actions button:hover {
+      color: #1e1e1e;
+    }
+
+    .post-list li .post-list-actions button.delete:hover {
+      color: #b33a3a;
+    }
+
+    .delete-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(420px, calc(100vw - 2rem));
+      max-height: fit-content;
+      border: 1px solid #d8d2c8;
+      background: #fefdfb;
+      color: #1e1e1e;
+      padding: 1.5rem;
+      box-shadow: 0 1rem 3rem rgba(30, 30, 30, 0.16);
+    }
+
+    .delete-dialog::backdrop {
+      background: rgba(30, 30, 30, 0.28);
+    }
+
+    .delete-dialog h2 {
+      font: 500 1.7rem/1.15 'Cormorant Garamond', serif;
+      margin: 0 0 0.6rem;
+    }
+
+    .delete-dialog p {
+      color: #6b6258;
+      font-size: 1.05rem;
+      margin: 0 0 1.25rem;
+    }
+
+    .delete-dialog .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .delete-dialog .dialog-delete {
+      border-color: #a33b35;
+      color: #a33b35;
+    }
+
+    .delete-dialog .dialog-delete:hover {
+      background: #a33b35;
+      color: #fefdfb;
+    }
+
+    /* build output */
+    .build-output {
+      margin-top: 2rem;
+      border-top: 1px solid #e0dbd2;
+      padding-top: 1.5rem;
+    }
+
+    .build-output h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.4rem;
+      font-style: italic;
+      margin-bottom: 1rem;
+      color: #1e1e1e;
+    }
+
+    .build-status {
+      display: none;
+      margin: 1rem 0;
+      padding: 0.85rem 1rem;
+      border: 1px solid #e0dbd2;
+      background: #fefdfb;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .build-status-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      color: #3a342e;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .build-status-detail {
+      color: #928b82;
+      font-size: 0.7rem;
+      margin-top: 0.45rem;
+    }
+
+    .build-progress {
+      height: 4px;
+      overflow: hidden;
+      background: #ece7e0;
+    }
+
+    .build-progress-fill {
+      width: 0;
+      height: 100%;
+      background: #1e1e1e;
+      transition: width 0.2s ease;
+    }
+
+    .build-output pre {
+      background: #f2efea;
+      border: 1px solid #e0dbd2;
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      color: #3a342e;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .build-output .file-list {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: #6b6258;
+      margin-top: 0.75rem;
+    }
+
+    .build-output .file-list span {
+      display: inline-block;
+      background: #ece7e0;
+      padding: 0.2rem 0.6rem;
+      margin: 0.15rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.03em;
+    }
+
+    .build-intro {
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+
+    .build-intro p {
+      color: #3a342e;
+      font-size: 1.2rem;
+      line-height: 1.7;
+    }
+
+    .build-checks,
+    .build-history {
+      border-top: 1px solid #e0dbd2;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+    }
+
+    .build-checks h3,
+    .build-history h3 {
+      color: #1e1e1e;
+      font: 500 1.4rem/1.2 'Cormorant Garamond', serif;
+      font-style: italic;
+      margin: 0 0 1rem;
+    }
+
+    .validation-list,
+    .history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .validation-list li,
+    .history-list li {
+      border-bottom: 1px solid #ece7e0;
+      color: #6b6258;
+      font: 300 0.78rem/1.5 'Inter', sans-serif;
+      padding: 0.7rem 0;
+    }
+
+    .validation-list li.valid::before,
+    .validation-list li.invalid::before {
+      display: inline-block;
+      width: 1.2rem;
+      color: #1e1e1e;
+      content: '✓';
+    }
+
+    .validation-list li.invalid::before {
+      color: #a33b35;
+      content: '!';
+    }
+
+    .validation-fix {
+      margin-left: 0.75rem;
+      border: 0;
+      border-bottom: 1px solid #cbc3b8;
+      background: transparent;
+      color: #6b6258;
+      cursor: pointer;
+      font: 300 0.68rem 'Inter', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .validation-fix:hover {
+      color: #1e1e1e;
+      border-bottom-color: #1e1e1e;
+    }
+
+    .history-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .history-list strong {
+      color: #3a342e;
+      font-weight: 400;
+    }
+
+    .history-list time {
+      color: #928b82;
+      white-space: nowrap;
+    }
+
+    /* ---------- CATALOG VIEW (same as before) ---------- */
+    .search-section {
+      margin: 1.75rem 0 2.2rem 0;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 380px;
+      border-bottom: 1px solid #cbc3b8;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrapper:focus-within {
+      border-bottom-color: #1e1e1e;
+    }
+
+    .search-icon {
+      font-size: 1.2rem;
+      color: #8b8279;
+      margin-right: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      user-select: none;
+    }
+
+    #searchInput {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      padding: 0.5rem 0;
+      color: #1e1e1e;
+      outline: none;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    #searchInput::placeholder {
+      color: #b1a89e;
+      font-style: italic;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    .catalog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #7a7168;
+      border-bottom: 1px dotted #ddd6cd;
+      padding-bottom: 0.6rem;
+    }
+
+    .post-count {
+      font-style: normal;
+    }
+
+    .blog-catalog {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+
+    .blog-item {
+      border-bottom: 1px solid #ece7e0;
+      padding-bottom: 2.25rem;
+      transition: opacity 0.2s;
+    }
+
+    .blog-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .blog-item h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 2rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
+    }
+
+    .blog-item h2 a {
+      text-decoration: none;
+      color: #1e1e1e;
+      transition: color 0.2s, border-bottom 0.2s;
+      border-bottom: 1px solid transparent;
+    }
+
+    .blog-item h2 a:hover {
+      border-bottom-color: #b1a89e;
+      color: #3a342e;
+    }
+
+    .post-meta {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #928b82;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .post-meta .date {
+      font-style: normal;
+    }
+
+    .post-meta .reading-time {
+      color: #b1a89e;
+    }
+
+    .post-image {
+      margin: 1.25rem 0 1.5rem 0;
+      max-width: 100%;
+      border: 1px solid #e8e2d9;
+      background: #f2efea;
+      line-height: 0;
+    }
+
+    .post-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: grayscale(15%) contrast(98%);
+      transition: filter 0.3s;
+    }
+
+    .post-image img:hover {
+      filter: grayscale(0%) contrast(100%);
+    }
+
+    .post-image figcaption {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #928b82;
+      padding: 0.6rem 0.75rem 0.5rem;
+      line-height: 1.4;
+      background: #faf9f7;
+      border-top: 1px solid #e8e2d9;
+    }
+
+    .blog-item .excerpt {
+      font-size: 1.15rem;
+      color: #3a342e;
+      max-width: 90%;
+      line-height: 1.7;
+      margin-bottom: 0.85rem;
+      font-weight: 400;
+    }
+
+    .blog-item .read-more {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b6258;
+      text-decoration: none;
+      border-bottom: 1px solid #cbc3b8;
+      padding-bottom: 2px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .blog-item .read-more:hover {
+      color: #1e1e1e;
+      border-bottom-color: #1e1e1e;
+    }
+
+    /* ---------- ABOUT ---------- */
+    .about-content {
+      max-width: 720px;
+      margin-top: 1rem;
+    }
+
+    .about-content .lead {
+      font-size: 1.5rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: #2a2520;
+      margin-bottom: 2rem;
+      font-weight: 400;
+      border-left: 3px solid #d8d2c8;
+      padding-left: 1.5rem;
+    }
+
+    .about-content p {
+      font-size: 1.15rem;
+      line-height: 1.75;
+      color: #3a342e;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-content h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 1.6rem;
+      font-style: italic;
+      margin: 2.5rem 0 0.75rem 0;
+      color: #1e1e1e;
+    }
+
+    .about-content .portrait {
+      margin: 2rem 0 2.5rem 0;
+      max-width: 320px;
+      border: 1px solid #e8e2d9;
+      background: #f2efea;
+    }
+
+    .about-content .portrait img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: grayscale(100%) contrast(102%);
+      transition: filter 0.4s;
+    }
+
+    .about-content .portrait img:hover {
+      filter: grayscale(30%) contrast(100%);
+    }
+
+    .about-content .portrait figcaption {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #928b82;
+      padding: 0.6rem 0.75rem;
+      background: #faf9f7;
+      border-top: 1px solid #e8e2d9;
+      line-height: 1.4;
+    }
+
+    .about-content .signature {
+      margin-top: 2.5rem;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #6b6258;
+      padding-top: 1rem;
+      border-top: 1px solid #ece7e0;
+    }
+
+    .author-profile {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin: 2.5rem 0;
+      padding: 1.25rem 0;
+      border-top: 1px solid #e0dbd2;
+      border-bottom: 1px solid #e0dbd2;
+    }
+
+    .profile-label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #928b82;
+    }
+
+    .profile-value {
+      display: block;
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: #3a342e;
+    }
+
+    /* ---------- FOOTER ---------- */
+    .site-footer {
+      margin-top: 5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e0dbd2;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #928b82;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .site-footer .cogito-footer {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      text-transform: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      color: #6b6258;
+    }
+
+    .no-results {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: #a89f95;
+      padding: 3rem 0;
+      text-align: left;
+      border-bottom: 1px solid #ece7e0;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1.5rem 0;
+      }
+      .container {
+        padding: 0 1rem;
+      }
+      .site-title {
+        font-size: 2.2rem;
+      }
+      .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .nav-tabs {
+        gap: 1.25rem;
+        font-size: 0.8rem;
+      }
+      .blog-item h2 {
+        font-size: 1.6rem;
+      }
+      .blog-item .excerpt {
+        max-width: 100%;
+        font-size: 1.05rem;
+      }
+      .subhead {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+      }
+      .about-content .lead {
+        font-size: 1.25rem;
+        padding-left: 1rem;
+      }
+      .about-content p {
+        font-size: 1.05rem;
+      }
+      .about-content .portrait {
+        max-width: 100%;
+      }
+      .author-profile {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    ::selection {
+      background: #e3ddd4;
+      color: #1e1e1e;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="header-top">
+      <div class="site-title">
+        <a href="#" id="homeLink">cogito</a>
+      </div>
+      <nav class="nav-tabs" aria-label="Primary navigation">
+        <a href="#" class="nav-link active" data-view="catalog">Journal</a>
+        <a href="#" class="nav-link" data-view="about">About</a>
+        <a href="#" class="nav-link" data-view="studio">Studio</a>
+        <a href="#" class="nav-link" data-view="build">Build</a>
+      </nav>
+    </div>
+    <div class="subhead">
+      <span class="cogito">issue 04 · thought in motion</span>
+      <span>journal · notes · questions</span>
+    </div>
+  </header>
+
+  <!-- ========== CATALOG VIEW ========== -->
+  <div id="catalogView" class="view active-view">
+    <div class="journal-shell">
+      <div class="journal-main">
+        <div class="search-section" id="searchSection">
+          <div class="search-wrapper">
+            <span class="search-icon">⌕</span>
+            <input type="text" id="searchInput" placeholder="maybe type words ..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="catalog-header">
+          <span class="catalog-label">reads</span>
+          <span class="post-count" id="postCount">7 entries</span>
+        </div>
+
+        <ul class="blog-catalog" id="blogCatalog">
+          <!-- posts rendered here by JS from localStorage -->
+        </ul>
+
+        <div id="noResults" class="no-results">
+          nothing found — try another thought.
+        </div>
+      </div>
+
+      <aside class="journal-sidebar" aria-label="Article index">
+        <div class="sidebar-panel">
+          <div class="sidebar-kicker">Articles</div>
+          <ul id="articleTree" class="tree-list"></ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div id="postDetailView" class="post-detail-view" aria-live="polite">
+    <div class="journal-shell">
+      <div class="journal-main">
+        <button type="button" id="backToCatalogBtn" class="post-detail-back">← back to catalog</button>
+        <article id="postDetailArticle" class="post-detail"></article>
+      </div>
+      <aside class="journal-sidebar" aria-label="Article index">
+        <div class="sidebar-panel">
+          <div class="sidebar-kicker">Articles</div>
+          <ul id="detailTree" class="tree-list"></ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ========== STUDIO VIEW ========== -->
+  <div id="studioView" class="view">
+    <div class="studio-intro">
+      <p>
+        Write locally. Your posts are saved in <strong>localStorage</strong> — they persist across sessions
+        on this device. When you're ready, open <em>Build</em> to validate and publish the latest changes
+        into the journal's <strong>reads</strong> archive.
+      </p>
+      <div class="hint">
+        ✦ no server · no database · no tracking · pure static output
+      </div>
+    </div>
+
+    <!-- editor -->
+    <div class="editor-grid">
+      <div class="editor-panel">
+        <div class="field-group">
+          <label for="postTitle">Title</label>
+          <input type="text" id="postTitle" placeholder="the first principle...">
+        </div>
+        <div class="field-group">
+          <label for="postExcerpt">Excerpt (short summary)</label>
+          <textarea id="postExcerpt" placeholder="a few lines that capture the essence..."></textarea>
+        </div>
+        <div class="field-group">
+          <label for="postDate">Date</label>
+          <input type="text" id="postDate" placeholder="12 march 2025">
+        </div>
+        <div class="field-group">
+          <label for="postReadingTime">Reading time</label>
+          <input type="text" id="postReadingTime" placeholder="4 min read">
+        </div>
+        <div class="field-group">
+          <label for="postImage">Image URL (optional)</label>
+          <input type="text" id="postImage" placeholder="https://... or data:image/svg+xml,...">
+        </div>
+        <div class="field-group">
+          <label for="postImageCaption">Image caption (optional)</label>
+          <input type="text" id="postImageCaption" placeholder="illustration — the fire, the doubt">
+        </div>
+        <div class="field-group">
+          <label for="postContent">Body (plain text, paragraphs separated by blank lines)</label>
+          <textarea id="postContent" class="content-area" placeholder="Descartes sat by the fire...&#10;&#10;The next paragraph..."></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-primary" id="savePostBtn">Save post</button>
+          <button class="btn btn-ghost" id="clearFormBtn">Clear</button>
+          <span id="editingIndicator" style="font-family:'Inter',sans-serif;font-size:0.75rem;color:#928b82;margin-left:auto;"></span>
+        </div>
+      </div>
+
+      <!-- live preview -->
+      <div class="editor-panel">
+        <label>Live preview</label>
+        <div class="preview-card" id="previewCard">
+          <h3 id="previewTitle">untitled</h3>
+          <div class="preview-meta" id="previewMeta">date · reading time</div>
+          <div class="preview-excerpt" id="previewExcerpt">your excerpt will appear here.</div>
+          <div class="preview-body" id="previewBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- existing posts list -->
+    <div style="margin-top:2.5rem;">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.4rem;font-style:italic;margin-bottom:0.75rem;">
+        your posts <span id="studioPostCount" style="font-family:'Inter',sans-serif;font-weight:300;font-size:0.75rem;color:#928b82;text-transform:uppercase;letter-spacing:0.05em;"></span>
+      </h3>
+      <ul class="post-list" id="studioPostList"></ul>
+    </div>
+
+  </div>
+
+  <!-- ========== BUILD VIEW ========== -->
+  <div id="buildView" class="view">
+    <div class="build-intro">
+      <p>Validate the journal, snapshot the changes, and publish the latest article records into the <em>reads/</em> archive.</p>
+    </div>
+
+    <div class="build-output">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+        <h3>publish changes to reads</h3>
+        <button class="btn btn-primary" id="buildBtn">Publish changes to reads</button>
+      </div>
+      <div class="build-status" id="buildStatus" role="status" aria-live="polite">
+        <div class="build-status-head">
+          <span id="buildStatusLabel">Preparing archive</span>
+          <span id="buildStatusPercent">0%</span>
+        </div>
+        <div class="build-progress"><div class="build-progress-fill" id="buildProgressFill"></div></div>
+        <div class="build-status-detail" id="buildStatusDetail"></div>
+      </div>
+      <div id="buildResult" style="display:none;">
+        <pre id="buildPre"></pre>
+        <div class="file-list" id="fileList"></div>
+        <button class="btn btn-ghost" id="copyBuildBtn" style="margin-top:1rem;">Copy build report</button>
+      </div>
+    </div>
+
+    <div class="build-checks">
+      <h3>validation</h3>
+      <ul class="validation-list" id="validationList"></ul>
+    </div>
+
+    <div class="build-history">
+      <h3>build history</h3>
+      <ul class="history-list" id="buildHistoryList"></ul>
+    </div>
+  </div>
+
+  <dialog id="deleteDialog" class="delete-dialog" aria-labelledby="deleteDialogTitle">
+    <form method="dialog">
+      <h2 id="deleteDialogTitle">Delete article?</h2>
+      <p id="deleteDialogMessage">This article will be removed from Studio.</p>
+      <div class="dialog-actions">
+        <button class="btn btn-ghost" value="cancel">Cancel</button>
+        <button class="btn dialog-delete" id="confirmDeleteBtn" value="delete">Delete article</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== ABOUT VIEW ========== -->
+  <div id="aboutView" class="view">
+    <div class="about-content">
+      <p class="lead">
+        “I think, therefore I am” is not a conclusion — it is a beginning.
+        A quiet, stubborn fact that survives every doubt.
+      </p>
+
+      <figure class="portrait">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23ddd6cd'/%3E%3Ctext x='200' y='250' font-family='Cormorant Garamond, serif' font-size='24' fill='%236b6258' text-anchor='middle' dominant-baseline='middle' font-style='italic'%3Eportrait%3C/text%3E%3C/svg%3E" alt="A minimalist portrait of the author">
+        <figcaption>the author — somewhere between doubt and certainty</figcaption>
+      </figure>
+
+      <div class="author-profile" aria-label="Author profile">
+        <div>
+          <span class="profile-label">Role</span>
+          <span class="profile-value">Writer &amp; editor</span>
+        </div>
+        <div>
+          <span class="profile-label">Subjects</span>
+          <span class="profile-value">Selfhood, language, attention</span>
+        </div>
+        <div>
+          <span class="profile-label">Method</span>
+          <span class="profile-value">Slow notes, careful questions</span>
+        </div>
+      </div>
+
+      <p>
+        This is a place for slow thinking. For essays that circle a single question until it opens.
+        The catalog is a collection of meditations on selfhood, language, silence, and the strange
+        persistence of consciousness in a world that rarely pauses to notice it.
+      </p>
+
+      <h3>Why “cogito”?</h3>
+      <p>
+        Because before any belief, there is the act of believing. Before any story, there is the one who tells it.
+        The cogito is not a proof of the external world — it is a proof of the inner one. A reminder that
+        awareness itself is the ground we stand on.
+      </p>
+
+      <p>
+        The blog is intentionally minimal: no noise, no algorithms, no infinite scroll. Just text, image,
+        and the occasional pause. Read slowly. Think freely.
+      </p>
+
+      <p class="signature">
+        — the author,<br>
+        still thinking, therefore still here.
+      </p>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <span>© 2025 but to who ?</span>
+    <span class="cogito-footer">dubito, ergo cogito, ergo sum.</span>
+    <span id="footerCount">reads · 7 entries</span>
+  </footer>
+</div>
+
+<script>
+  // ============================================================
+  //  COGITO STUDIO — local writing, static publishing
+  // ============================================================
+  (function() {
+    'use strict';
+
+    // ---------- STORAGE KEY ----------
+    const STORAGE_KEY = 'cogito_posts_v1';
+    const BUILD_HISTORY_KEY = 'cogito_build_history_v1';
+
+    // ---------- ORIGINAL READS (initial catalog) ----------
+    const initialReads = [
+      {
+        id: 'post-1789813297767-0irx',
+        title: 'A New Reflection',
+        excerpt: 'A short note on rebuilding trust in attention.',
+        date: '15 March 2025',
+        readingTime: '3 min read',
+        image: '',
+        imageCaption: '',
+        content: 'Attention is not a resource we own.\n\nIt is a practice we renew.'
+      },
+      {
+        id: 'read-brain-center',
+        title: 'The Brain Has No Center',
+        excerpt: 'We keep looking for the little witness inside the skull. The stranger possibility is that a self can be real without having a single place where it lives.',
+        date: '20 March 2025',
+        readingTime: '8 min read',
+        image: '',
+        imageCaption: '',
+        content: 'There is a moment in every explanation of the brain when I want to ask: yes, but where am I? Not which region is active, not which network is communicating, but where is the person to whom all this is happening?\n\nThe honest answer is slightly disappointing. There is no small room behind the forehead where a witness watches the screens. Experience is spread across systems that remember, predict, sort, and revise. The feeling of being one person is something they manage together.\n\nThat does not make the feeling fake. A city has no single building where the city lives. It can still wake, grieve, celebrate, and change. Perhaps the self is like that: not an object hidden somewhere, but a pattern that becomes visible in the way many ordinary things hold together.\n\nI find this less frightening when I stop treating unity as a possession. I do not need to locate the self like a coin under a cushion. I only need to notice the work by which, for a little while, a life feels like mine.'
+      },
+      {
+        id: 'read-wanting-shape',
+        title: 'The Shape of Wanting',
+        excerpt: 'Desire promises that the next thing will complete us. Usually it gives us a direction, a story, and another morning in which to revise both.',
+        date: '18 March 2025',
+        readingTime: '7 min read',
+        image: '',
+        imageCaption: '',
+        content: 'Wanting is often described as a hole. We are missing something, so we reach. But some desires feel less like holes than windows. They show us a possible life and make the present rearrange itself around the view.\n\nThe trouble begins when the view hardens into a promise. We imagine the new job, the message, the recognition, and quietly ask it to deliver a self we can finally tolerate. The object changes; the bargain stays the same.\n\nStill, I do not want to become suspicious of desire altogether. Wanting can be a form of attention. It tells us what has begun to matter, even when it gets the remedy wrong. The useful question is not how to want nothing, but what our wanting is trying to say before advertising and fear finish the sentence.\n\nSome mornings the answer is embarrassingly small: more time, less noise, a walk without a destination. Small answers are not failures. They are often the first honest ones.'
+      },
+      {
+        id: 'read-desert-does-not-belong',
+        title: 'The Desert Does Not Belong to Paul',
+        excerpt: 'Dune is most interesting when its chosen one discovers that prophecy is not ownership. Arrakis keeps its own counsel, beyond every hero’s plan.',
+        date: '16 March 2025',
+        readingTime: '9 min read',
+        image: '',
+        imageCaption: '',
+        content: 'The easiest way to read Dune is as a story about arrival. Paul comes to Arrakis, loses almost everything, learns the language of the desert, and returns as the figure history appeared to be waiting for. It is a satisfying shape. It is also the shape the novel keeps worrying at.\n\nArrakis never becomes Paul’s stage. The sandworms do not care about his lineage. Water remains a fact before it becomes a symbol. The Fremen have a history that is not simply a rehearsal for his transformation. Even prophecy, once it enters a community, becomes something more complicated than a script.\n\nPaul’s tragedy is not that he fails to see the future. It is that seeing so much does not give him the right to own what comes next. His visions turn consequence into weather: everywhere, approaching, impossible to hold.\n\nThe desert’s lesson is ecological before it is mystical. A system is not conquered because one person learns its names. It is respected when the person understands that the system will continue after the story has stopped flattering him.'
+      },
+      {
+        id: 'read-face-in-the-feed',
+        title: 'The Face in the Feed',
+        excerpt: 'A feed feels personal because it learns our habits. But recognition is not the same as being known, and a mirror can still be a machine.',
+        date: '14 March 2025',
+        readingTime: '8 min read',
+        image: '',
+        imageCaption: '',
+        content: 'The strange intimacy of a feed is that it remembers without knowing us. It notices the pause before a video, the subject we return to, the hour when we are easiest to keep. Then it offers a version of the world shaped around those tiny admissions.\n\nThere is pleasure in being anticipated. A good recommendation feels like a friend handing us a book at exactly the right moment. But the feeling can hide a quiet substitution. The system is not asking what we love; it is measuring what keeps us there.\n\nThat difference matters because attention is not only a resource. It is how a life acquires texture. What we repeatedly look at becomes part of what seems normal, urgent, and possible. The feed does not need to control our opinions to change us. It only needs to decide which questions arrive often enough to feel like our own.\n\nI still use the machines. The point is not purity. It is to leave a little unclaimed space in the day, enough to meet something that was not selected from the shape of yesterday’s self.'
+      }
+    ];
+
+    // ---------- STATE ----------
+    let posts = [];
+    let editingId = null;
+    let pendingDeleteId = null;
+
+    // ---------- DOM REFS ----------
+    const catalogView = document.getElementById('catalogView');
+    const studioView = document.getElementById('studioView');
+    const buildView = document.getElementById('buildView');
+    const aboutView = document.getElementById('aboutView');
+    const searchSection = document.getElementById('searchSection');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const homeLink = document.getElementById('homeLink');
+    const postDetailView = document.getElementById('postDetailView');
+    const postDetailArticle = document.getElementById('postDetailArticle');
+    const backToCatalogBtn = document.getElementById('backToCatalogBtn');
+    const articleTree = document.getElementById('articleTree');
+    const detailTree = document.getElementById('detailTree');
+    let activePostId = null;
+
+    const blogCatalog = document.getElementById('blogCatalog');
+    const noResultsDiv = document.getElementById('noResults');
+    const postCountSpan = document.getElementById('postCount');
+    const footerCount = document.getElementById('footerCount');
+    const searchInput = document.getElementById('searchInput');
+
+    // studio DOM
+    const postTitle = document.getElementById('postTitle');
+    const postExcerpt = document.getElementById('postExcerpt');
+    const postDate = document.getElementById('postDate');
+    const postReadingTime = document.getElementById('postReadingTime');
+    const postImage = document.getElementById('postImage');
+    const postImageCaption = document.getElementById('postImageCaption');
+    const postContent = document.getElementById('postContent');
+    const savePostBtn = document.getElementById('savePostBtn');
+    const clearFormBtn = document.getElementById('clearFormBtn');
+    const editingIndicator = document.getElementById('editingIndicator');
+    const studioPostList = document.getElementById('studioPostList');
+    const studioPostCount = document.getElementById('studioPostCount');
+    const buildBtn = document.getElementById('buildBtn');
+    const buildResult = document.getElementById('buildResult');
+    const buildPre = document.getElementById('buildPre');
+    const fileList = document.getElementById('fileList');
+    const copyBuildBtn = document.getElementById('copyBuildBtn');
+    const buildStatus = document.getElementById('buildStatus');
+    const buildStatusLabel = document.getElementById('buildStatusLabel');
+    const buildStatusPercent = document.getElementById('buildStatusPercent');
+    const buildStatusDetail = document.getElementById('buildStatusDetail');
+    const buildProgressFill = document.getElementById('buildProgressFill');
+    const validationList = document.getElementById('validationList');
+    const buildHistoryList = document.getElementById('buildHistoryList');
+    const deleteDialog = document.getElementById('deleteDialog');
+    const deleteDialogMessage = document.getElementById('deleteDialogMessage');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    // preview
+    const previewTitle = document.getElementById('previewTitle');
+    const previewMeta = document.getElementById('previewMeta');
+    const previewExcerpt = document.getElementById('previewExcerpt');
+    const previewBody = document.getElementById('previewBody');
+
+    // ---------- STORAGE ----------
+    function loadPosts() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          posts = JSON.parse(stored).filter(post => !String(post.id || '').startsWith('seed-'));
+          const existingIds = new Set(posts.map(post => post.id));
+          const newReads = initialReads.filter(post => !existingIds.has(post.id));
+          if (newReads.length || posts.length !== JSON.parse(stored).length) {
+            posts.push(...newReads);
+            savePosts();
+          }
+        } else {
+          posts = [...initialReads];
+          savePosts();
+        }
+      } catch (e) {
+        posts = [...initialReads];
+      }
+    }
+
+    function savePosts() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      } catch (e) {
+        console.warn('could not save to localStorage', e);
+      }
+    }
+
+    function validatePosts() {
+      const checks = [];
+      const ids = posts.map(post => post.id);
+      const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
+      const missingTitlePosts = posts.filter(post => !String(post.title || '').trim());
+      const invalidIdPosts = posts.filter(post => !/^[a-zA-Z0-9_-]+$/.test(post.id || ''));
+      const invalidDatePosts = posts.filter(post => Number.isNaN(Date.parse(post.date || '')));
+      const articleName = post => post.title || post.id || 'Untitled article';
+
+      checks.push({ valid: posts.length > 0, text: posts.length + ' article' + (posts.length === 1 ? '' : 's') + ' ready to publish', fix: posts.length ? '' : 'Open Studio and save an article first.' });
+      checks.push({ valid: duplicateIds.length === 0, text: duplicateIds.length === 0 ? 'Article IDs are unique' : 'Duplicate ID: ' + duplicateIds[0], fix: duplicateIds.length ? 'Review the duplicate article in Studio.' : '' });
+      checks.push({ valid: missingTitlePosts.length === 0, text: missingTitlePosts.length === 0 ? 'Every article has a title' : 'Missing title: ' + articleName(missingTitlePosts[0]), target: 'postTitle', postId: missingTitlePosts[0]?.id || '' });
+      checks.push({ valid: invalidIdPosts.length === 0, text: invalidIdPosts.length === 0 ? 'Article IDs are valid filenames' : 'Invalid filename ID: ' + articleName(invalidIdPosts[0]), fix: invalidIdPosts.length ? 'Article IDs are generated automatically; delete and recreate this article in Studio.' : '' });
+      checks.push({ valid: invalidDatePosts.length === 0, text: invalidDatePosts.length === 0 ? 'Publication dates are readable' : 'Invalid date: ' + articleName(invalidDatePosts[0]), target: 'postDate', postId: invalidDatePosts[0]?.id || '' });
+
+      if (validationList) {
+        validationList.innerHTML = checks.map(check => `<li class="${check.valid ? 'valid' : 'invalid'}">${escapeHtml(check.text)}${!check.valid && (check.target || check.fix) ? `<button class="validation-fix" type="button" data-target="${escapeHtml(check.target || '')}" data-post-id="${escapeHtml(check.postId || '')}" data-fix="${escapeHtml(check.fix || '')}">fix in Studio</button>` : ''}</li>`).join('');
+        validationList.querySelectorAll('.validation-fix').forEach(button => {
+          button.addEventListener('click', () => {
+            showView('studio');
+            if (button.dataset.postId) loadPostIntoForm(button.dataset.postId);
+            const target = button.dataset.postId ? document.querySelector('.editor-grid') : (button.dataset.target ? document.getElementById(button.dataset.target) : studioPostList);
+            target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target?.focus?.();
+          });
+        });
+      }
+      return checks.every(check => check.valid);
+    }
+
+    function loadBuildHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(BUILD_HISTORY_KEY) || '[]');
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function renderBuildHistory() {
+      if (!buildHistoryList) return;
+      const history = loadBuildHistory();
+      buildHistoryList.innerHTML = history.length
+        ? history.map(snapshot => `<li><strong>${escapeHtml(snapshot.status)} · ${snapshot.count} articles</strong><time>${escapeHtml(snapshot.date)}</time></li>`).join('')
+        : '<li>No builds yet. Your first successful archive will appear here.</li>';
+    }
+
+    function recordBuildSnapshot(status, count) {
+      const history = loadBuildHistory();
+      history.unshift({ status, count, date: new Date().toLocaleString() });
+      try {
+        localStorage.setItem(BUILD_HISTORY_KEY, JSON.stringify(history.slice(0, 10)));
+      } catch (error) {
+        console.warn('could not save build history', error);
+      }
+      renderBuildHistory();
+    }
+
+    function parseDate(dateText) {
+      const timestamp = Date.parse(dateText);
+      return Number.isNaN(timestamp) ? 0 : timestamp;
+    }
+
+    function getSortedPosts() {
+      return [...posts].sort((a, b) => parseDate(b.date) - parseDate(a.date));
+    }
+
+    function renderTreeList(root, activeId) {
+      if (!root) return;
+      root.innerHTML = '';
+      const sorted = getSortedPosts();
+
+      sorted.forEach(post => {
+        const item = document.createElement('li');
+        if (activeId === post.id) item.classList.add('active');
+
+        const link = document.createElement('a');
+        link.href = '#';
+        link.dataset.postId = post.id;
+        link.textContent = post.title;
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          renderPostDetail(post.id);
+        });
+
+        item.appendChild(link);
+        root.appendChild(item);
+      });
+    }
+
+    function renderPostDetail(postId) {
+      const post = posts.find(item => item.id === postId);
+      if (!post) return;
+      activePostId = postId;
+      renderTreeList(articleTree, postId);
+      renderTreeList(detailTree, postId);
+
+      const paragraphs = (post.content || '').split(/\n\s*\n/).map(part => part.trim()).filter(Boolean);
+      const articleBody = paragraphs.length
+        ? paragraphs.map(paragraph => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`).join('')
+        : `<p>${escapeHtml(post.excerpt || 'No excerpt provided yet.')}</p>`;
+
+      const imageMarkup = post.image
+        ? `
+            <figure class="article-image">
+              <img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">
+              ${post.imageCaption ? `<figcaption>${escapeHtml(post.imageCaption)}</figcaption>` : ''}
+            </figure>
+          `
+        : '';
+
+      postDetailArticle.innerHTML = `
+        <h1>${escapeHtml(post.title)}</h1>
+        <div class="post-article-meta">
+          <span>${escapeHtml(post.date)}</span>
+          <span>·</span>
+          <span>${escapeHtml(post.readingTime)}</span>
+        </div>
+        ${post.excerpt ? `<div class="article-lead">${escapeHtml(post.excerpt)}</div>` : ''}
+        ${imageMarkup}
+        <div class="article-body">${articleBody}</div>
+      `;
+
+      postDetailView.style.display = 'block';
+      blogCatalog.style.display = 'none';
+      noResultsDiv.style.display = 'none';
+      searchSection.style.display = 'none';
+      catalogView.classList.remove('active-view');
+      studioView.classList.remove('active-view');
+      aboutView.classList.remove('active-view');
+      history.replaceState(null, '', '#post-' + post.id);
+    }
+
+    // ---------- RENDER CATALOG ----------
+    function renderCatalog(filterQuery) {
+      const query = (filterQuery || '').trim().toLowerCase();
+      let visible = 0;
+
+      blogCatalog.innerHTML = '';
+      blogCatalog.style.display = 'flex';
+      postDetailView.style.display = 'none';
+
+      const sorted = getSortedPosts();
+
+      sorted.forEach(post => {
+        const title = (post.title || '').toLowerCase();
+        const excerpt = (post.excerpt || '').toLowerCase();
+        const content = (post.content || '').toLowerCase();
+        const matches = query === '' || title.includes(query) || excerpt.includes(query) || content.includes(query);
+
+        if (!matches) return;
+        visible++;
+
+        const li = document.createElement('li');
+        li.className = 'blog-item';
+        li.dataset.title = title;
+        li.dataset.excerpt = excerpt;
+
+        let imageHtml = '';
+        if (post.image) {
+          const caption = post.imageCaption || '';
+          imageHtml = `
+            <figure class="post-image">
+              <img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">
+              ${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}
+            </figure>
+          `;
+        }
+
+        li.innerHTML = `
+          <h2><a href="#" data-post-id="${post.id}">${escapeHtml(post.title)}</a></h2>
+          <div class="post-meta">
+            <span class="date">${escapeHtml(post.date)}</span>
+            <span class="reading-time">${escapeHtml(post.readingTime)}</span>
+          </div>
+          ${imageHtml}
+          <p class="excerpt">${escapeHtml(post.excerpt)}</p>
+          <a href="#" class="read-more" data-post-id="${post.id}">read →</a>
+        `;
+        blogCatalog.appendChild(li);
+      });
+
+      if (visible === 0) {
+        postCountSpan.textContent = '0 entries';
+        footerCount.textContent = 'reads · ' + sorted.length + ' entries';
+        noResultsDiv.style.display = 'block';
+      } else {
+        postCountSpan.textContent = visible === sorted.length ? sorted.length + ' entries' : visible + ' of ' + sorted.length + ' entries';
+        footerCount.textContent = 'reads · ' + sorted.length + ' entries';
+        noResultsDiv.style.display = 'none';
+      }
+
+      blogCatalog.querySelectorAll('a[data-post-id], .read-more[data-post-id]').forEach(link => {
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          renderPostDetail(link.dataset.postId);
+        });
+      });
+    }
+
+    // ---------- ESCAPE HTML ----------
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // ---------- RENDER STUDIO POST LIST ----------
+    function renderStudioList() {
+      studioPostList.innerHTML = '';
+      studioPostCount.textContent = '(' + posts.length + ')';
+
+      posts.forEach(post => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <span class="post-list-title">${escapeHtml(post.title)}</span>
+          <span class="post-list-date">${escapeHtml(post.date)}</span>
+          <span class="post-list-actions">
+            <button class="edit" data-id="${post.id}">edit</button>
+            <button class="delete" data-id="${post.id}">delete</button>
+          </span>
+        `;
+        studioPostList.appendChild(li);
+      });
+
+      // attach listeners
+      studioPostList.querySelectorAll('.edit').forEach(btn => {
+        btn.addEventListener('click', () => loadPostIntoForm(btn.dataset.id));
+      });
+      studioPostList.querySelectorAll('.delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const post = posts.find(item => item.id === btn.dataset.id);
+          if (!post) return;
+          pendingDeleteId = post.id;
+          deleteDialogMessage.textContent = `“${post.title}” will be removed from Studio. This cannot be undone.`;
+          deleteDialog.showModal();
+        });
+      });
+    }
+
+    confirmDeleteBtn.addEventListener('click', event => {
+      event.preventDefault();
+      if (!pendingDeleteId) return;
+      posts = posts.filter(post => post.id !== pendingDeleteId);
+      savePosts();
+      renderStudioList();
+      renderCatalog(searchInput.value);
+      clearForm();
+      pendingDeleteId = null;
+      deleteDialog.close();
+    });
+
+    deleteDialog.addEventListener('close', () => {
+      pendingDeleteId = null;
+    });
+
+    // ---------- LOAD POST INTO FORM ----------
+    function loadPostIntoForm(id) {
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+      editingId = id;
+      postTitle.value = post.title;
+      postExcerpt.value = post.excerpt;
+      postDate.value = post.date;
+      postReadingTime.value = post.readingTime;
+      postImage.value = post.image || '';
+      postImageCaption.value = post.imageCaption || '';
+      postContent.value = post.content || '';
+      editingIndicator.textContent = 'editing: ' + post.title;
+      updatePreview();
+      // scroll to editor
+      document.querySelector('.editor-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ---------- CLEAR FORM ----------
+    function clearForm() {
+      editingId = null;
+      postTitle.value = '';
+      postExcerpt.value = '';
+      postDate.value = '';
+      postReadingTime.value = '';
+      postImage.value = '';
+      postImageCaption.value = '';
+      postContent.value = '';
+      editingIndicator.textContent = '';
+      updatePreview();
+    }
+
+    // ---------- SAVE POST ----------
+    function savePost() {
+      const title = postTitle.value.trim();
+      const excerpt = postExcerpt.value.trim();
+      const date = postDate.value.trim() || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      const readingTime = postReadingTime.value.trim() || '3 min read';
+      const image = postImage.value.trim();
+      const imageCaption = postImageCaption.value.trim();
+      const content = postContent.value.trim();
+
+      if (!title) {
+        alert('please give your post a title.');
+        return;
+      }
+
+      if (editingId) {
+        // update existing
+        const idx = posts.findIndex(p => p.id === editingId);
+        if (idx !== -1) {
+          posts[idx] = { ...posts[idx], title, excerpt, date, readingTime, image, imageCaption, content };
+        }
+      } else {
+        // create new
+        const newPost = {
+          id: 'post-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          title, excerpt, date, readingTime, image, imageCaption, content
+        };
+        posts.push(newPost);
+      }
+
+      savePosts();
+      renderStudioList();
+      renderCatalog(searchInput.value);
+      clearForm();
+      alert('post saved.');
+    }
+
+    // ---------- LIVE PREVIEW ----------
+    function updatePreview() {
+      previewTitle.textContent = postTitle.value.trim() || 'untitled';
+      previewMeta.textContent = (postDate.value.trim() || 'date') + ' · ' + (postReadingTime.value.trim() || 'reading time');
+      previewExcerpt.textContent = postExcerpt.value.trim() || 'your excerpt will appear here.';
+      previewBody.textContent = postContent.value.trim() || '';
+    }
+
+    // ---------- BUILD STATIC SITE ----------
+    function buildStaticSite() {
+      const sortedPosts = [...posts];
+
+      // generate the catalog HTML for the static site
+      let catalogHtml = '';
+      sortedPosts.forEach(post => {
+        let imageHtml = '';
+        if (post.image) {
+          const caption = post.imageCaption || '';
+          imageHtml = `
+            <figure class="post-image">
+              <img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}">
+              ${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}
+            </figure>
+          `;
+        }
+        catalogHtml += `
+          <li class="blog-item" data-title="${escapeHtml(post.title.toLowerCase())}" data-excerpt="${escapeHtml(post.excerpt.toLowerCase())}">
+            <h2><a href="#">${escapeHtml(post.title)}</a></h2>
+            <div class="post-meta">
+              <span class="date">${escapeHtml(post.date)}</span>
+              <span class="reading-time">${escapeHtml(post.readingTime)}</span>
+            </div>
+            ${imageHtml}
+            <p class="excerpt">${escapeHtml(post.excerpt)}</p>
+            <a href="#" class="read-more">read →</a>
+          </li>
+        `;
+      });
+
+      // build the full static HTML
+      const staticHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cogito · ergo sum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== MINIMALIST LITERARY CSS ===== */
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#faf9f7;color:#1e1e1e;font-family:'Cormorant Garamond',Georgia,serif;font-weight:400;line-height:1.6;padding:2rem 1.5rem;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased}
+    .container{max-width:1000px;width:100%;margin:0 auto}
+    .site-header{margin-bottom:2.5rem;border-bottom:1px solid #e0dbd2;padding-bottom:1.25rem}
+    .header-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;margin-bottom:0.5rem}
+    .site-title{font-size:2.6rem;font-weight:500;letter-spacing:-0.02em;line-height:1.2;font-family:'Cormorant Garamond',serif;font-style:italic;color:#1e1e1e}
+    .site-title a{text-decoration:none;color:inherit;transition:opacity 0.2s}
+    .site-title a:hover{opacity:0.7}
+    .nav-tabs{display:flex;gap:1.75rem;font-family:'Inter',sans-serif;font-weight:300;font-size:0.85rem;letter-spacing:0.06em;text-transform:uppercase;color:#6b6258;padding-bottom:0.25rem}
+    .nav-tabs a{text-decoration:none;color:inherit;padding-bottom:0.25rem;border-bottom:1px solid transparent;transition:border-color 0.2s,color 0.2s;cursor:pointer}
+    .nav-tabs a:hover{color:#1e1e1e;border-bottom-color:#cbc3b8}
+    .nav-tabs a.active{color:#1e1e1e;border-bottom-color:#1e1e1e;font-weight:400}
+    .subhead{font-family:'Inter',sans-serif;font-weight:300;font-size:0.9rem;letter-spacing:0.02em;color:#6b6258;text-transform:uppercase;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.75rem}
+    .subhead .cogito{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;text-transform:none;letter-spacing:0.01em;color:#3a342e}
+    .search-section{margin:1.75rem 0 2.2rem 0;display:flex;justify-content:flex-start}
+    .search-wrapper{display:flex;align-items:center;width:100%;max-width:380px;border-bottom:1px solid #cbc3b8;transition:border-color 0.2s}
+    .search-wrapper:focus-within{border-bottom-color:#1e1e1e}
+    .search-icon{font-size:1.2rem;color:#8b8279;margin-right:0.5rem;font-family:'Inter',sans-serif;font-weight:300;user-select:none}
+    #searchInput{width:100%;border:none;background:transparent;font-family:'Cormorant Garamond',serif;font-size:1.2rem;padding:0.5rem 0;color:#1e1e1e;outline:none;font-weight:400;letter-spacing:0.01em}
+    #searchInput::placeholder{color:#b1a89e;font-style:italic;font-weight:400;opacity:0.8}
+    .catalog-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.5rem;font-family:'Inter',sans-serif;font-weight:300;font-size:0.85rem;letter-spacing:0.04em;text-transform:uppercase;color:#7a7168;border-bottom:1px dotted #ddd6cd;padding-bottom:0.6rem}
+    .blog-catalog{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2.5rem}
+    .blog-item{border-bottom:1px solid #ece7e0;padding-bottom:2.25rem}
+    .blog-item:last-child{border-bottom:none;padding-bottom:0}
+    .blog-item h2{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2rem;line-height:1.3;letter-spacing:-0.01em;margin-bottom:0.3rem}
+    .blog-item h2 a{text-decoration:none;color:#1e1e1e;transition:color 0.2s,border-bottom 0.2s;border-bottom:1px solid transparent}
+    .blog-item h2 a:hover{border-bottom-color:#b1a89e;color:#3a342e}
+    .post-meta{font-family:'Inter',sans-serif;font-weight:300;font-size:0.75rem;letter-spacing:0.05em;text-transform:uppercase;color:#928b82;margin-bottom:1rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+    .post-image{margin:1.25rem 0 1.5rem 0;max-width:100%;border:1px solid #e8e2d9;background:#f2efea;line-height:0}
+    .post-image img{width:100%;height:auto;display:block;filter:grayscale(15%) contrast(98%);transition:filter 0.3s}
+    .post-image img:hover{filter:grayscale(0%) contrast(100%)}
+    .post-image figcaption{font-family:'Inter',sans-serif;font-weight:300;font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:#928b82;padding:0.6rem 0.75rem 0.5rem;line-height:1.4;background:#faf9f7;border-top:1px solid #e8e2d9}
+    .blog-item .excerpt{font-size:1.15rem;color:#3a342e;max-width:90%;line-height:1.7;margin-bottom:0.85rem;font-weight:400}
+    .blog-item .read-more{font-family:'Inter',sans-serif;font-weight:300;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;color:#6b6258;text-decoration:none;border-bottom:1px solid #cbc3b8;padding-bottom:2px;transition:border-color 0.2s,color 0.2s}
+    .blog-item .read-more:hover{color:#1e1e1e;border-bottom-color:#1e1e1e}
+    .about-content{max-width:720px;margin-top:1rem}
+    .about-content .lead{font-size:1.5rem;font-style:italic;line-height:1.5;color:#2a2520;margin-bottom:2rem;font-weight:400;border-left:3px solid #d8d2c8;padding-left:1.5rem}
+    .about-content p{font-size:1.15rem;line-height:1.75;color:#3a342e;margin-bottom:1.5rem}
+    .about-content h3{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.6rem;font-style:italic;margin:2.5rem 0 0.75rem 0;color:#1e1e1e}
+    .about-content .portrait{margin:2rem 0 2.5rem 0;max-width:320px;border:1px solid #e8e2d9;background:#f2efea}
+    .about-content .portrait img{width:100%;height:auto;display:block;filter:grayscale(100%) contrast(102%);transition:filter 0.4s}
+    .about-content .portrait img:hover{filter:grayscale(30%) contrast(100%)}
+    .about-content .portrait figcaption{font-family:'Inter',sans-serif;font-weight:300;font-size:0.65rem;letter-spacing:0.05em;text-transform:uppercase;color:#928b82;padding:0.6rem 0.75rem;background:#faf9f7;border-top:1px solid #e8e2d9;line-height:1.4}
+    .about-content .signature{margin-top:2.5rem;font-size:1.2rem;font-style:italic;color:#6b6258;padding-top:1rem;border-top:1px solid #ece7e0}
+    .site-footer{margin-top:5rem;padding-top:2rem;border-top:1px solid #e0dbd2;font-family:'Inter',sans-serif;font-weight:300;font-size:0.75rem;letter-spacing:0.04em;text-transform:uppercase;color:#928b82;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+    .site-footer .cogito-footer{font-family:'Cormorant Garamond',serif;font-style:italic;text-transform:none;font-size:0.9rem;letter-spacing:0.02em;color:#6b6258}
+    .no-results{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-style:italic;color:#a89f95;padding:3rem 0;text-align:left;border-bottom:1px solid #ece7e0;display:none}
+    .view{display:none}
+    .view.active-view{display:block}
+    @media (max-width:600px){body{padding:1.5rem 1rem}.site-title{font-size:2.2rem}.header-top{flex-direction:column;align-items:flex-start;gap:0.5rem}.nav-tabs{gap:1.25rem;font-size:0.8rem}.blog-item h2{font-size:1.6rem}.blog-item .excerpt{max-width:100%;font-size:1.05rem}.subhead{flex-direction:column;align-items:flex-start;gap:0.4rem}.about-content .lead{font-size:1.25rem;padding-left:1rem}.about-content p{font-size:1.05rem}.about-content .portrait{max-width:100%}}
+    ::selection{background:#e3ddd4;color:#1e1e1e}
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="site-header">
+    <div class="header-top">
+      <div class="site-title"><a href="#">cogito</a></div>
+      <nav class="nav-tabs">
+        <a href="#" class="nav-link active" data-view="catalog">Catalog</a>
+        <a href="#" class="nav-link" data-view="about">About</a>
+      </nav>
+    </div>
+    <div class="subhead">
+      <span class="cogito">ergo sum — i think, therefore i am</span>
+      <span>essays · reflections · catalog</span>
+    </div>
+  </header>
+
+  <div id="catalogView" class="view active-view">
+    <div class="search-section">
+      <div class="search-wrapper">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="maybe type words ..." autocomplete="off">
+      </div>
+    </div>
+    <div class="catalog-header">
+      <span>reads</span>
+      <span class="post-count" id="postCount">${sortedPosts.length} entries</span>
+    </div>
+    <ul class="blog-catalog" id="blogCatalog">
+      ${catalogHtml}
+    </ul>
+    <div id="noResults" class="no-results">nothing found — try another thought.</div>
+  </div>
+
+  <div id="aboutView" class="view">
+    <div class="about-content">
+      <p class="lead">“I think, therefore I am” is not a conclusion — it is a beginning. A quiet, stubborn fact that survives every doubt.</p>
+      <figure class="portrait">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500'%3E%3Crect width='400' height='500' fill='%23ddd6cd'/%3E%3Ctext x='200' y='250' font-family='Cormorant Garamond, serif' font-size='24' fill='%236b6258' text-anchor='middle' dominant-baseline='middle' font-style='italic'%3Eportrait%3C/text%3E%3C/svg%3E" alt="portrait">
+        <figcaption>the author — somewhere between doubt and certainty</figcaption>
+      </figure>
+      <p>This is a place for slow thinking. For essays that circle a single question until it opens. The catalog is a collection of meditations on selfhood, language, silence, and the strange persistence of consciousness in a world that rarely pauses to notice it.</p>
+      <h3>Why “cogito”?</h3>
+      <p>Because before any belief, there is the act of believing. Before any story, there is the one who tells it. The cogito is not a proof of the external world — it is a proof of the inner one. A reminder that awareness itself is the ground we stand on.</p>
+      <p>The blog is intentionally minimal: no noise, no algorithms, no infinite scroll. Just text, image, and the occasional pause. Read slowly. Think freely.</p>
+      <p class="signature">— the author,<br>still thinking, therefore still here.</p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2025 but to who ?</span>
+    <span class="cogito-footer">dubito, ergo cogito, ergo sum.</span>
+    <span>reads · ${sortedPosts.length} entries</span>
+  </footer>
+</div>
+
+<script>
+  (function() {
+    var searchInput = document.getElementById('searchInput');
+    var blogItems = document.querySelectorAll('.blog-item');
+    var noResults = document.getElementById('noResults');
+    var postCount = document.getElementById('postCount');
+    var navLinks = document.querySelectorAll('.nav-link');
+    var catalogView = document.getElementById('catalogView');
+    var aboutView = document.getElementById('aboutView');
+    var total = blogItems.length;
+
+    function showView(name) {
+      if (name === 'about') {
+        catalogView.classList.remove('active-view');
+        aboutView.classList.add('active-view');
+      } else {
+        catalogView.classList.add('active-view');
+        aboutView.classList.remove('active-view');
+      }
+      navLinks.forEach(function(link) {
+        if (link.dataset.view === name) link.classList.add('active');
+        else link.classList.remove('active');
+      });
+    }
+
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        showView(link.dataset.view);
+      });
+    });
+
+    function filter() {
+      var q = searchInput.value.trim().toLowerCase();
+      var visible = 0;
+      blogItems.forEach(function(item) {
+        var title = item.dataset.title || '';
+        var excerpt = item.dataset.excerpt || '';
+        var text = item.textContent.toLowerCase();
+        var match = q === '' || title.indexOf(q) !== -1 || excerpt.indexOf(q) !== -1 || text.indexOf(q) !== -1;
+        item.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      if (visible === 0) noResults.style.display = 'block';
+      else noResults.style.display = 'none';
+      postCount.textContent = visible === total ? total + ' entries' : visible + ' of ' + total + ' entries';
+    }
+
+    searchInput.addEventListener('input', filter);
+    filter();
+  })();
+<\/script>
+</body>
+</html>`;
+
+      // show build result
+      buildResult.style.display = 'block';
+      buildPre.textContent = staticHtml;
+
+      // file list
+      fileList.innerHTML = '<span>index.html</span><span>styles embedded</span><span>search embedded</span><span>' + sortedPosts.length + ' posts</span>';
+
+      // store for copy
+      buildPre.dataset.fullHtml = staticHtml;
+    }
+
+    // ---------- COPY BUILD TO CLIPBOARD ----------
+    function copyBuild() {
+      const html = buildPre.dataset.fullHtml || buildPre.textContent;
+      if (!html) return;
+
+      navigator.clipboard.writeText(html).then(() => {
+        copyBuildBtn.textContent = 'copied ✓';
+        setTimeout(() => { copyBuildBtn.textContent = 'Copy full HTML to clipboard'; }, 2000);
+      }).catch(() => {
+        // fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = html;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        copyBuildBtn.textContent = 'copied ✓';
+        setTimeout(() => { copyBuildBtn.textContent = 'Copy full HTML to clipboard'; }, 2000);
+      });
+    }
+
+    // ---------- BUILD PROJECT ARCHIVE ----------
+    function updateBuildStatus(percent, label, detail) {
+      const roundedPercent = Math.max(0, Math.min(100, Math.round(percent)));
+      buildStatus.style.display = 'block';
+      buildStatusLabel.textContent = label;
+      buildStatusPercent.textContent = roundedPercent + '%';
+      buildStatusDetail.textContent = detail || '';
+      buildProgressFill.style.width = roundedPercent + '%';
+    }
+
+    function resetBuildFeedback() {
+      buildResult.style.display = 'none';
+      buildPre.textContent = '';
+      buildPre.dataset.fullHtml = '';
+      fileList.innerHTML = '';
+      updateBuildStatus(0, 'Ready to publish', 'No publish attempt in progress');
+    }
+
+    async function writeJournalFile(directory, filename, contents) {
+      const fileHandle = await directory.getFileHandle(filename, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(contents);
+      await writable.close();
+    }
+
+    async function buildProjectArchive() {
+      resetBuildFeedback();
+      const sortedPosts = getSortedPosts();
+      const manifest = 'window.COGITO_READS = ' + JSON.stringify(sortedPosts, null, 2) + ';\n';
+      if (!validatePosts()) {
+        buildResult.style.display = 'block';
+        buildPre.textContent = 'Build stopped. Fix the validation issues above before writing the archive.';
+        updateBuildStatus(0, 'Validation failed', 'No files were written');
+        recordBuildSnapshot('Validation failed', sortedPosts.length);
+        return;
+      }
+      buildBtn.disabled = true;
+      updateBuildStatus(0, 'Preparing journal release', sortedPosts.length + ' article' + (sortedPosts.length === 1 ? '' : 's') + ' queued');
+
+      if (!window.showDirectoryPicker) {
+        buildResult.style.display = 'block';
+        buildPre.textContent = 'This browser cannot publish directly into a project folder. Open Studio in a Chromium-based browser to choose the project folder.';
+        updateBuildStatus(0, 'Publishing unavailable', 'Directory access is not supported in this browser');
+        buildBtn.disabled = false;
+        return;
+      }
+
+      try {
+        updateBuildStatus(8, 'Choose journal folder', 'Select the project folder containing index.html');
+        const projectDirectory = await window.showDirectoryPicker({ mode: 'readwrite' });
+        const readsDirectory = await projectDirectory.getDirectoryHandle('reads', { create: true });
+        updateBuildStatus(20, 'Publishing reads manifest', 'reads/manifest.js');
+        await writeJournalFile(readsDirectory, 'manifest.js', manifest);
+        updateBuildStatus(30, 'Publishing reads index', 'reads/index.json');
+        await writeJournalFile(readsDirectory, 'index.json', JSON.stringify(sortedPosts.map(post => ({ id: post.id, title: post.title, date: post.date, readingTime: post.readingTime })), null, 2));
+
+        for (const [index, post] of sortedPosts.entries()) {
+          const progress = 30 + ((index + 1) / sortedPosts.length) * 70;
+          updateBuildStatus(progress, 'Publishing article ' + (index + 1) + ' of ' + sortedPosts.length, 'reads/' + post.id + '.json');
+          await writeJournalFile(readsDirectory, post.id + '.json', JSON.stringify(post, null, 2));
+          await new Promise(resolve => setTimeout(resolve, 80));
+        }
+
+        buildResult.style.display = 'block';
+        buildPre.textContent = 'Journal changes published successfully into the reads/ archive.';
+        fileList.innerHTML = '<span>reads/manifest.js</span><span>reads/index.json</span>' + sortedPosts.map(post => '<span>reads/' + escapeHtml(post.id) + '.json</span>').join('');
+        buildPre.dataset.fullHtml = '';
+        updateBuildStatus(100, 'Journal release published', sortedPosts.length + ' article changes written to reads/');
+        recordBuildSnapshot('Journal release published', sortedPosts.length);
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          updateBuildStatus(0, 'Publish cancelled', 'No journal files were changed');
+          buildBtn.disabled = false;
+          return;
+        }
+        buildResult.style.display = 'block';
+        buildPre.textContent = 'The journal release could not be published: ' + (error.message || 'write failed');
+        updateBuildStatus(0, 'Publish stopped', error.message || 'write failed');
+        recordBuildSnapshot('Publish stopped', sortedPosts.length);
+      } finally {
+        buildBtn.disabled = false;
+      }
+    }
+
+    // ---------- VIEW SWITCHING ----------
+    function showView(viewName) {
+      if (viewName === 'build') {
+        buildView.classList.add('active-view');
+        studioView.classList.remove('active-view');
+        catalogView.classList.remove('active-view');
+        aboutView.classList.remove('active-view');
+        searchSection.style.display = 'none';
+        blogCatalog.style.display = 'none';
+        postDetailView.style.display = 'none';
+        resetBuildFeedback();
+        validatePosts();
+        renderBuildHistory();
+        setTimeout(() => {
+          buildBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 80);
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.dataset.view === 'build');
+        });
+        history.replaceState(null, '', '#build');
+        return;
+      }
+
+      if (viewName === 'catalog') {
+        catalogView.classList.add('active-view');
+        studioView.classList.remove('active-view');
+        buildView.classList.remove('active-view');
+        aboutView.classList.remove('active-view');
+        searchSection.style.display = 'flex';
+        blogCatalog.style.display = 'flex';
+        postDetailView.style.display = 'none';
+      } else if (viewName === 'studio') {
+        studioView.classList.add('active-view');
+        catalogView.classList.remove('active-view');
+        buildView.classList.remove('active-view');
+        aboutView.classList.remove('active-view');
+        searchSection.style.display = 'none';
+        blogCatalog.style.display = 'none';
+        postDetailView.style.display = 'none';
+        renderStudioList();
+      } else {
+        aboutView.classList.add('active-view');
+        catalogView.classList.remove('active-view');
+        studioView.classList.remove('active-view');
+        buildView.classList.remove('active-view');
+        searchSection.style.display = 'none';
+        blogCatalog.style.display = 'none';
+        postDetailView.style.display = 'none';
+      }
+
+      navLinks.forEach(link => {
+        if (link.dataset.view === viewName) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      if (viewName === 'catalog') {
+        renderCatalog(searchInput.value);
+      }
+      renderTreeList(articleTree, activePostId);
+      renderTreeList(detailTree, activePostId);
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        showView(link.dataset.view);
+        if (link.dataset.view === 'about') history.replaceState(null, '', '#about');
+        else if (link.dataset.view === 'studio') history.replaceState(null, '', '#studio');
+        else if (link.dataset.view === 'build') history.replaceState(null, '', '#build');
+        else history.replaceState(null, '', '#catalog');
+      });
+    });
+
+    backToCatalogBtn.addEventListener('click', () => {
+      showView('catalog');
+      history.replaceState(null, '', '#catalog');
+    });
+
+    homeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      showView('catalog');
+      history.replaceState(null, '', '#catalog');
+    });
+
+    // ---------- SEARCH ----------
+    searchInput.addEventListener('input', () => {
+      renderCatalog(searchInput.value);
+    });
+
+    // focus search with '/'
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement !== searchInput && catalogView.classList.contains('active-view')) {
+        e.preventDefault();
+        searchInput.focus();
+      }
+      if (e.key === 'Escape' && postDetailView.style.display !== 'none') {
+        showView('catalog');
+      }
+    });
+
+    // ---------- STUDIO EVENTS ----------
+    savePostBtn.addEventListener('click', savePost);
+    clearFormBtn.addEventListener('click', clearForm);
+    buildBtn.addEventListener('click', buildProjectArchive);
+    copyBuildBtn.addEventListener('click', copyBuild);
+
+    // live preview on input
+    [postTitle, postExcerpt, postDate, postReadingTime, postContent].forEach(el => {
+      el.addEventListener('input', updatePreview);
+    });
+
+    // ---------- INIT ----------
+    loadPosts();
+    renderTreeList(articleTree, activePostId);
+    renderTreeList(detailTree, activePostId);
+    renderCatalog('');
+    renderStudioList();
+    updatePreview();
+    validatePosts();
+    renderBuildHistory();
+
+    // Restore the requested route only after posts have loaded.
+    if (window.location.hash.startsWith('#post-')) {
+      const postId = window.location.hash.replace('#post-', '');
+      if (posts.some(item => item.id === postId)) renderPostDetail(postId);
+      else showView('catalog');
+    } else if (window.location.hash === '#about') showView('about');
+    else if (window.location.hash === '#studio') showView('studio');
+    else if (window.location.hash === '#build') showView('build');
+    else showView('catalog');
+
+    // if there are no posts, add a hint
+    if (posts.length === 0) {
+      blogCatalog.innerHTML = '<li class="no-results" style="display:block;">no posts yet — go to studio to write your first.</li>';
+    }
+  })();
+</script>
+</body>
+</html>
